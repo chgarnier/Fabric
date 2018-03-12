@@ -64,12 +64,12 @@ setEnvs () {
 	t="\${ORG${org}_PEER${peer}_URL}" && export CORE_PEER_ADDRESS=`eval echo $t`
 	t="\${ORG${org}_ADMIN_MSP}" && export CORE_PEER_MSPCONFIGPATH=`eval echo $t`
 	t="\${ORG${org}_PEER${peer}_TLS_ROOTCERT}" && export CORE_PEER_TLS_ROOTCERT_FILE=`eval echo $t`
-  #  t="peer${peer}.org${org}.example.com:7051" && export CORE_PEER_ADDRESS=`eval echo $t`
-  #  t="Org${org}MSP" && export CORE_PEER_LOCALMSPID=`eval echo $t`
-  #  t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/server.crt" && export CORE_PEER_TLS_CERT_FILE=`eval echo $t`
-  #  t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/server.key" && export CORE_PEER_TLS_KEY_FILE=`eval echo $t`
-  #  t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/ca.crt" && export CORE_PEER_TLS_ROOTCERT_FILE=`eval echo $t`
-  #  t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/users/Admin@org${org}.example.com/msp" && export CORE_PEER_MSPCONFIGPATH=`eval echo $t`
+    t="peer${peer}.org${org}.example.com:7051" && export CORE_PEER_ADDRESS=`eval echo $t`
+    t="Org${org}MSP" && export CORE_PEER_LOCALMSPID=`eval echo $t`
+    t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/server.crt" && export CORE_PEER_TLS_CERT_FILE=`eval echo $t`
+    t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/server.key" && export CORE_PEER_TLS_KEY_FILE=`eval echo $t`
+    t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/peers/peer${peer}.org${org}.example.com/tls/ca.crt" && export CORE_PEER_TLS_ROOTCERT_FILE=`eval echo $t`
+    t="/etc/hyperledger/fabric/crypto-config/peerOrganizations/org${org}.example.com/users/Admin@org${org}.example.com/msp" && export CORE_PEER_MSPCONFIGPATH=`eval echo $t`
 }
 
 checkOSNAvailability() {

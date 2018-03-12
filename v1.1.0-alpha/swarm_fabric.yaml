@@ -310,7 +310,7 @@ services:
     restart: always
     hostname: peer0.org1.example.com
     environment:
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - FABRIC_CFG_PATH=
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
@@ -353,13 +353,14 @@ services:
     hostname: peer1.org1.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer1.org1.example.com
       - CORE_PEER_ADDRESS=peer1.org1.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:7051
       - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org1.example.com:7052
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org1.example.com:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
@@ -394,13 +395,14 @@ services:
     hostname: peer0.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:7051
       - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org2.example.com:7052
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:7051
       - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
@@ -435,13 +437,14 @@ services:
     hostname: peer1.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:7051
       - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org2.example.com:7052
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org2.example.com:7051
       - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
@@ -568,7 +571,6 @@ services:
 
   explorer:
     restart: always
-    container_name: explorer
     hostname: explorer
     image: yeasy/blockchain-explorer:0.1.0-preview # Till we have official image
     command: bash -c 'sleep 10; cp config/config.json . ; node main.js'
@@ -588,14 +590,15 @@ services:
         volume:
           nocopy: true
     networks:
-      - fabric
+      fabric:
+        aliases:
+          - explorer
     deploy:
       placement:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810]
 
   mysql: # mysql service
     restart: always
-    container_name: mysql
     hostname: mysql
     image: mysql:8.0
     environment:
@@ -607,9 +610,10 @@ services:
         target: /docker-entrypoint-initdb.d/
         volume:
           nocopy: true
-    #command: bash -c 'mysqld; sleep 1; mysql -uroot -proot < /tmp/fabricexplorer.sql; while true; do sleep 20171117; done'
     networks:
-      - fabric
+      fabric:
+        aliases:
+          - mysql
     deploy:
       placement:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810]
