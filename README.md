@@ -1,17 +1,22 @@
-# Fabric
-Basé sur les développements ci-dessous : 
-https://github.com/yeasy/docker-compose-files/tree/master/hyperledger_fabric
+# Comment déployer et manager un réseau blockchain Hyperledger Fabric avec Docker Swarm
 
-1) Création d'un réseau docker 
+Vous trouverez ici l'ensemeble des éléments et explications nécessaires au déploiement d'Hyperledger Fabric sur plusieurs machines distantes. Nous utilisons pour cela Docker Swarm afin de gérer et de manager l'insfrastructure blockchain. 
 
-2) Création d'un réseau docker
+De nombreux éléments et scripts provient d'ici : https://github.com/yeasy/docker-compose-files/tree/master/hyperledger_fabric. 
 
-3) Docker Endpoint
+Dans notre exemple, nous allons déployer un résau Hyperledger FABRIC composé de :
+  - 2 organisations possèdant chacune deux noeuds, une autorité de certification et un noeud orderer
+  - d'un consensus de type kafka dont les noeuds sont répartis entre les 2 organisations
+  - de l'explorateur de blockchain Hyperledger Explorer
 
-4) Serveur NFS
+# Etape à suivre
 
-5) Génération matériel cryptographique
+1) Configuration du réseau docker swarm 
 
-6) Déploiement du réseau
+2) Mise en place d'un serveur NFS sur le master SWARM
 
-7) Test
+3) Génération matériel cryptographique
+
+4) Déploiement du réseau
+
+5) Test de bon fonctionnement du réseau
