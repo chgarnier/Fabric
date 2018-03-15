@@ -387,7 +387,7 @@ services:
           - peer1.org1.example.com
     deploy:
       placement:
-        constraints: [node.ip ==192.168.73.58] 
+        constraints: [node.hostname == clements-Precision-Tower-3420 ] 
 
   peer0_org2_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -519,7 +519,7 @@ services:
     command: orderer start 
     deploy:
       placement:
-        constraints: [node.ip ==192.168.73.58] 
+        constraints: [node.hostname == clements-Precision-Tower-3420 ] 
 
   cli:
     image: yeasy/hyperledger-fabric:1.1.0-alpha
@@ -572,7 +572,7 @@ services:
   explorer:
     restart: always
     hostname: explorer
-    image: yeasy/blockchain-explorer:0.1.0-preview # Till we have official image
+    image: yeasy/blockchain-explorer:latest # Till we have official image
     command: bash -c 'sleep 10; cp config/config.json . ; node main.js'
     ports:
       - "8080:8080"
@@ -584,23 +584,18 @@ services:
         target: /blockchain-explorer/config
         volume:
           nocopy: true
-      - type: volume
-        source: fabric_crypto_config
-        target: /blockchain-explorer/first-network/crypto-config
-        volume:
-          nocopy: true
     networks:
       fabric:
         aliases:
           - explorer
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810]
+        constraints: [node.hostname == multivac] 
 
   mysql: # mysql service
     restart: always
     hostname: mysql
-    image: mysql:8.0
+    image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=fabricexplorer
@@ -616,5 +611,4 @@ services:
           - mysql
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810]
-
+        constraints: [node.hostname == multivac ] 
