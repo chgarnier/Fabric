@@ -7,22 +7,9 @@ HLF_VERSION ?= 1.1.0-alpha
 CODE_BUILD_WAIT=40 # time to wait to build peer/orderer from local code
 NETWORK_INIT_WAIT=2 # time to wait the fabric network finish initialization
 
-COMPOSE_FILE ?= "docker-compose-2orgs-4peers-solo.yaml"
+COMPOSE_FILE ?= "swarm_fabric.yaml"
 
-LOG_PATH ?= solo/logs
-
-ifeq ($(HLF_MODE),kafka)
-	COMPOSE_FILE="docker-compose-2orgs-4peers-kafka.yaml"
-	LOG_PATH=kafka/logs
-else ifeq ($(HLF_MODE),couchdb)
-	COMPOSE_FILE="docker-compose-2orgs-4peers-couchdb.yaml"
-else ifeq ($(HLF_MODE),event)
-	COMPOSE_FILE="docker-compose-2orgs-4peers-event.yaml"
-else ifeq ($(HLF_MODE),be)
-	COMPOSE_FILE="docker-compose-2orgs-4peers-solo-be.yaml"
-else ifeq ($(HLF_MODE),dev)
-	COMPOSE_FILE="docker-compose-1orgs-1peers-dev.yaml"
-endif
+LOG_PATH ?= kafka/logs
 
 all: test
 
@@ -76,19 +63,10 @@ start: # bootup the fabric network
 	@echo "Start a fabric network with ${COMPOSE_FILE}..."
 	@make clean
 	@docker stack deploy -c swarm_fabric.yaml fabric
-#	@docker stack deploy -c swarm_kafka.yaml kafka
-#	@docker stack deploy -c swarm_orderer.yaml orderer 
-#	@docker stack deploy -c swarm_peers.yaml peers  
-#	@docker stack deploy -c swarm_cli.yaml cli  
-#	@docker stack deploy -c swarm_explorer.yaml explorer  # Start a fabric network
 
 stop: # stop the fabric network
 	@echo "Stop the fabric network with ${COMPOSE_FILE}..."
 	@docker stack rm fabric
-#	@docker stack  rm kafka
-#	@docker stack  rm orderer 
-#	@docker stack  rm peers  
-#	@docker stack  rm explorer  
 
 chaincode_dev: restart chaincode_init test_cc_peer0 stop
 
@@ -112,26 +90,12 @@ test_channel_update: # send the channel update transaction
 
 ################## Configtxlator testing operations ################
 test_configtxlator: # Test change config using configtxlator
-	if [ "$(HLF_MODE)" = "kafka" ]; then \
-		bash scripts/test_configtxlator.sh kafka; \
-	else \
-		bash scripts/test_configtxlator.sh solo; \
-	fi
-
+	bash scripts/test_configtxlator.sh kafka; \
+	
 test_config_update: # Test change config to add new org
-	if [ "$(HLF_MODE)" = "kafka" ]; then \
-		bash scripts/test_config_update.sh kafka; \
-	else \
-		bash scripts/test_config_update.sh solo; \
-	fi
-
+	bash scripts/test_config_update.sh kafka; \
+	
 ################## Chaincode testing operations ################
-test_cc: # test chaincode, deprecated
-	if [ "$(HLF_MODE)" = "dev" ]; then \
-			make test_cc_peer0; \
-	else \
-			make test_cc_invoke_query; \
-	fi
 
 test_cc_install: # Install the chaincode
 	@echo "Install chaincode on the fabric network"
@@ -186,35 +150,16 @@ cli: # enter the cli container
 	docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash
 
 orderer: # enter the orderer container
-	docker exec -it orderer.example.com bash
+	docker exec -it fabric_orderer.1.$(docker service ps -f 'name=fabric_orderer.1' fabric_orderer -q) bash
 
 peer: # enter the peer container
-	docker exec -it peer0.org1.example.com bash
+	docker exec -it fabric_peer0_org1_example_com.1.$(docker service ps -f 'name=fabric_peer0_org1_example_com.1' fabric_peer0_org1_example_com -q) bash
 
 ps: # show existing docker images
 	docker ps -a
 
-logs: # show logs
-	docker-compose -f ${COMPOSE_FILE} logs -f --tail 200
-
-logs_check: logs_save logs_view
-
-logs_save: # save logs
-	[ -d $(LOG_PATH) ] || mkdir -p $(LOG_PATH)
-	docker logs peer0.org1.example.com >& $(LOG_PATH)/dev_peer0.log
-	docker logs orderer.example.com >& $(LOG_PATH)/dev_orderer.log
-	docker-compose -f ${COMPOSE_FILE} logs >& $(LOG_PATH)/dev_all.log
-
-logs_view: # view logs
-	less $(LOG_PATH)/dev_peer.log
-
 gen_config: # generate config artifacts
-	if [ "$(HLF_MODE)" = "kafka" ]; then \
-			bash scripts/gen_config.sh kafka; \
-	else \
-			bash scripts/gen_config.sh solo; \
-	fi
-
+	bash scripts/gen_config.sh kafka; \
 
 download: # download required images
 	@echo "Download Docker images"
@@ -223,5 +168,5 @@ download: # download required images
 ################## chaincode dev mode ################
 chaincode_init: # start chaincode in dev mode and do install/instantiate
 	@echo "Install and instantiate cc example02 on the fabric dev network"
-	@docker exec -it fabric-cli bash -c "cd /tmp; bash scripts/init_chaincode_dev.sh"
+	@docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/init_chaincode_dev.sh"
 

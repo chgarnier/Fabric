@@ -1,129 +1,162 @@
-# https://github.com/yeasy/docker-compose-files/tree/master/hyperledger
 # This compose file will start a Hyperledger Fabric 1.0 MVE, including
-# * 2 ca (not in use now)
-# * 1 orderer
+# * 2 ca 
+# * 1 orderer with 4 kafka nodes and 3 zookeeper nodes
 # * 4 peers in 2 orgs
-# * cli for testing
+# * cli for testing and interacting 
+#
+# We use Docker Swarm to deploy and manage Hyperledger Fabric Network
 
 version: '3.2'
 
+
+# We use an external network : docker network create --driver overlay --attachable fabric
 networks:
   fabric:
     external:
       name: fabric
 
+
+ 
 volumes:
   fabric:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric"
   fabric_peer0_org1:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com"
   fabric_peer1_org1:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com"
   fabric_peer0_org2:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com"
   fabric_peer1_org2:
     external: false 
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com"
   fabric_channel:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/kafka/channel-artifacts/"
   fabric_orderer:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com"
   fabric_scripts:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/scripts"
   fabric_examples:
      external: false 
      driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/examples"
   fabric_kafka:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/kafka"
   fabric_explorer_artifacts:
     external: false 
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/explorer-artifacts"
   fabric_crypto_config:
     external: false
     driver_opts:
-      o: addr=192.168.73.52,nolock,soft,rw
+      o: addr=185.6.211.220:2049,nolock,soft,rw
       type: nfs
       device: ":/nfs/fabric/crypto-config"
+  fabric_ca_org1:
+    external: false
+    driver_opts:
+      o: addr=185.6.211.220:2049,nolock,soft,rw
+      type: nfs
+      device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/ca"
+  fabric_ca_org2:
+    external: false
+    driver_opts:
+      o: addr=185.6.211.220:2049,nolock,soft,rw
+      type: nfs
+      device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/ca"
 
 services:
-#  ca.org1.example.com:
-#    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
-#    restart: always
-#    container_name: ca.org1.example.com
-#    hostname: ca.org1.example.com
-#    environment:
-#      - FABRIC_CA_VERSION=1.1.0
-#      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-#      - FABRIC_CA_SERVER_TLS_ENABLED=true # change to false to disable TLS
-#      - FABRIC_CA_SERVER_CA_NAME=ca-org1
-#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-#      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/62bc326c0a9aa67c8ded5fe4d7c9a70cf7c519e084d435ac3cf4d108d362f381_sk 
-#    ports:
-#      - "7054:7054"
-#    volumes:
-#      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-#    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/62bc326c0a9aa67c8ded5fe4d7c9a70cf7c519e084d435ac3cf4d108d362f381_sk -b admin:adminpw -d'
+
+  ca_org1_example_com:
+    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
+    restart: always
+    hostname: ca.org1.example.com
+    environment:
+      - FABRIC_CA_VERSION=1.1.0
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true 
+      - FABRIC_CA_SERVER_CA_NAME=ca-org1
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f991df36e42d089b24f04561679fb5d0cc37c2d0ca67b03f3ff24ce5a3a86876_sk 
+    volumes:      
+      - type: volume
+        source: fabric_ca_org1
+        target: /etc/hyperledger/fabric-ca-server-config
+        volume:
+          nocopy: true
+    networks:
+      fabric:
+        aliases:
+          - ca.org1.example.com
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/f991df36e42d089b24f04561679fb5d0cc37c2d0ca67b03f3ff24ce5a3a86876_sk -b admin:adminpw -d'
+    deploy:
+      placement:
+        constraints: [node.hostname ==multivac]
 
 
-#  ca.org2.example.com:
-#    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
-#    restart: always
-#    container_name: ca.org2.example.com
-#    hostname: ca.org2.example.com
-#    environment:
-#      - FABRIC_CA_VERSION=1.1.0
-#      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
-#      - FABRIC_CA_SERVER_TLS_ENABLED=true # change to false to disable TLS
-#      - FABRIC_CA_SERVER_CA_NAME=ca-org2
-#      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-#     - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/c47ffc804039b67dd6aee7cb7d5b9e933ff06f5e4562196bf5cbd1b3df321829_sk
-#    ports:
-#      - "8054:7054"
-#    volumes:
-#      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-#    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/c47ffc804039b67dd6aee7cb7d5b9e933ff06f5e4562196bf5cbd1b3df321829_sk -b admin:adminpw -d'
-
+  ca_org2_example_com:
+    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
+    restart: always
+    hostname: ca.org2.example.com
+    environment:
+      - FABRIC_CA_VERSION=1.1.0
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true 
+      - FABRIC_CA_SERVER_CA_NAME=ca-org2
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/060caea329e6b7a8675e6d7a1cae77268b1a6adb02b2671d5f7333bf4e5a5859_sk
+    volumes:      
+      - type: volume
+        source: fabric_ca_org2
+        target: /etc/hyperledger/fabric-ca-server-config
+        volume:
+          nocopy: true
+    networks:
+      fabric:
+        aliases:
+          - ca.org2.example.com
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/060caea329e6b7a8675e6d7a1cae77268b1a6adb02b2671d5f7333bf4e5a5859_sk -b admin:adminpw -d'
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
 
 # ZooKeeper services, at least 3 nodes
   zookeeper0:
@@ -164,7 +197,7 @@ services:
           - zookeeper1
     deploy:
       placement:
-        constraints: [node.hostname ==multivac]
+        constraints: [node.hostname == multivac ] 
 
   zookeeper2:
     image: hyperledger/fabric-zookeeper:x86_64-0.4.5
@@ -198,9 +231,7 @@ services:
       - KAFKA_REPLICA_FETCH_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
       - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
       - KAFKA_LOG_RETENTION_MS=-1
-    expose:
-      - '9092'
-    environment:
+      - KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS=16000
       - KAFKA_BROKER_ID=0
       - KAFKA_MIN_INSYNC_REPLICAS=2
       - KAFKA_DEFAULT_REPLICATION_FACTOR=3
@@ -227,9 +258,7 @@ services:
       - KAFKA_REPLICA_FETCH_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
       - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
       - KAFKA_LOG_RETENTION_MS=-1
-    expose:
-      - '9092'
-    environment:
+      - KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS=16000
       - KAFKA_BROKER_ID=1
       - KAFKA_DEFAULT_REPLICATION_FACTOR=3
       - KAFKA_MIN_INSYNC_REPLICAS=2
@@ -256,9 +285,7 @@ services:
       - KAFKA_REPLICA_FETCH_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
       - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
       - KAFKA_LOG_RETENTION_MS=-1
-    expose:
-      - '9092'
-    environment:
+      - KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS=16000
       - KAFKA_BROKER_ID=2
       - KAFKA_DEFAULT_REPLICATION_FACTOR=3
       - KAFKA_MIN_INSYNC_REPLICAS=2
@@ -273,7 +300,7 @@ services:
           - kafka2
     deploy:
       placement:
-        constraints: [node.hostname ==multivac]
+        constraints: [node.hostname == multivac ] 
 
   kafka3:
     hostname: kafka3
@@ -285,9 +312,7 @@ services:
       - KAFKA_REPLICA_FETCH_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
       - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
       - KAFKA_LOG_RETENTION_MS=-1
-    expose:
-      - '9092'
-    environment:
+      - KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS=16000
       - KAFKA_BROKER_ID=3
       - KAFKA_DEFAULT_REPLICATION_FACTOR=3
       - KAFKA_MIN_INSYNC_REPLICAS=2
@@ -302,7 +327,7 @@ services:
            - kafka3
     deploy:
       placement:
-        constraints: [node.hostname ==multivac]
+        constraints: [node.hostname == multivac ] 
 
 
   peer0_org1_example_com:
@@ -319,17 +344,17 @@ services:
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   # uncomment this to use specific network
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false  # whether this node is the group leader, default to false
+      - CORE_PEER_GOSSIP_ORGLEADER=false 
         #- CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     volumes:      
       - type: volume
@@ -362,17 +387,17 @@ services:
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   # uncomment this to use specific network
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric 
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false  # whether this node is the group leader, default to false
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
         #- CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     volumes:      
       - type: volume
@@ -387,7 +412,7 @@ services:
           - peer1.org1.example.com
     deploy:
       placement:
-        constraints: [node.hostname == clements-Precision-Tower-3420 ] 
+        constraints: [node.hostname == multivac] 
 
   peer0_org2_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -404,17 +429,17 @@ services:
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   # uncomment this to use specific network
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false  # whether this node is the group leader, default to false
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
         #- CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     volumes:      
       - type: volume
@@ -429,7 +454,7 @@ services:
           - peer0.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
 
   peer1_org2_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -446,17 +471,17 @@ services:
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  # uncomment this to use specific network
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false  # whether this node is the group leader, default to false
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
         #- CORE_PEER_PROFILE_ENABLED=true
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     volumes:      
       - type: volume
@@ -471,14 +496,13 @@ services:
           - peer1.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
 
   orderer_example_com:  # There  can be multiple orderers
     hostname: orderer.example.com
     image: yeasy/hyperledger-fabric-orderer:1.1.0-alpha
-    # Default config can be found at https://github.com/hyperledger/fabric/blob/master/orderer/common/localconfig/config.go
     environment:
-      - ORDERER_GENERAL_LOGLEVEL=DEBUG  # default: INFO
+      - ORDERER_GENERAL_LOGLEVEL=INFO  # default: INFO
       - ORDERER_GENERAL_LOGFORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0 # default: 127.0.0.1
       - ORDERER_GENERAL_GENESISMETHOD=file # default: provisional
@@ -519,7 +543,7 @@ services:
     command: orderer start 
     deploy:
       placement:
-        constraints: [node.hostname == clements-Precision-Tower-3420 ] 
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810]  
 
   cli:
     image: yeasy/hyperledger-fabric:1.1.0-alpha
@@ -527,7 +551,7 @@ services:
     tty: true
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_LEVEL=INFO
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
       - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
