@@ -16,95 +16,8 @@ networks:
       name: fabric
 
 
- 
-volumes:
-  fabric:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric"
-  fabric_peer0_org1:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com"
-  fabric_peer1_org1:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com"
-  fabric_peer0_org2:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com"
-  fabric_peer1_org2:
-    external: false 
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com"
-  fabric_channel:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/kafka/channel-artifacts/"
-  fabric_orderer:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com"
-  fabric_scripts:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/scripts"
-  fabric_examples:
-     external: false 
-     driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/examples"
-  fabric_kafka:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/kafka"
-  fabric_explorer_artifacts:
-    external: false 
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/explorer-artifacts"
-  fabric_crypto_config:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config"
-  fabric_ca_org1:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org1.example.com/ca"
-  fabric_ca_org2:
-    external: false
-    driver_opts:
-      o: addr=185.6.211.220:2049,nolock,soft,rw
-      type: nfs
-      device: ":/nfs/fabric/crypto-config/peerOrganizations/org2.example.com/ca"
-
 services:
-
+# CAr services, at least one CA per organization 
   ca_org1_example_com:
     image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
     restart: always
@@ -115,18 +28,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true 
       - FABRIC_CA_SERVER_CA_NAME=ca-org1
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/f991df36e42d089b24f04561679fb5d0cc37c2d0ca67b03f3ff24ce5a3a86876_sk 
-    volumes:      
-      - type: volume
-        source: fabric_ca_org1
-        target: /etc/hyperledger/fabric-ca-server-config
-        volume:
-          nocopy: true
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ff62d157ad938150d7b49b92df7e61ed2fae666c605a25f8e2b6bf14aeabb09c_sk 
     networks:
       fabric:
         aliases:
-          - ca.org1.example.com
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/f991df36e42d089b24f04561679fb5d0cc37c2d0ca67b03f3ff24ce5a3a86876_sk -b admin:adminpw -d'
+          - ca.org1.example.com 
+    command: > 
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/ff62d157ad938150d7b49b92df7e61ed2fae666c605a25f8e2b6bf14aeabb09c_sk -b admin:adminpw -d'
     deploy:
       placement:
         constraints: [node.hostname ==multivac]
@@ -142,18 +51,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true 
       - FABRIC_CA_SERVER_CA_NAME=ca-org2
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/060caea329e6b7a8675e6d7a1cae77268b1a6adb02b2671d5f7333bf4e5a5859_sk
-    volumes:      
-      - type: volume
-        source: fabric_ca_org2
-        target: /etc/hyperledger/fabric-ca-server-config
-        volume:
-          nocopy: true
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/6eeaa87a59a2c14115a9df842c01a0a2b1bf6db2eed37f90c94f8a04462110a9_sk
     networks:
       fabric:
         aliases:
           - ca.org2.example.com
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/060caea329e6b7a8675e6d7a1cae77268b1a6adb02b2671d5f7333bf4e5a5859_sk -b admin:adminpw -d'
+    command: > 
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/6eeaa87a59a2c14115a9df842c01a0a2b1bf6db2eed37f90c94f8a04462110a9_sk -b admin:adminpw -d'
     deploy:
       placement:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
@@ -344,7 +249,7 @@ services:
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
@@ -354,15 +259,13 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
-      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-    volumes:      
-      - type: volume
-        source: fabric_peer0_org1
-        target: /etc/hyperledger/fabric
-        volume:
-          nocopy: true
-    command: peer node start
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x}cd %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
+            
     networks:
       fabric:
         aliases:
@@ -387,7 +290,7 @@ services:
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric 
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
@@ -397,15 +300,12 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-    volumes:      
-      - type: volume
-        source: fabric_peer1_org1
-        target: /etc/hyperledger/fabric
-        volume:
-          nocopy: true
-    command: peer node start
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
     networks:
       fabric:
         aliases:
@@ -441,13 +341,10 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-    volumes:      
-      - type: volume
-        source: fabric_peer0_org2
-        target: /etc/hyperledger/fabric
-        volume:
-          nocopy: true
-    command: peer node start
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
     networks:
       fabric:
         aliases:
@@ -483,13 +380,10 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
       - CORE_CHIANCODE_LOGGING_LEVEL=INFO
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
-    volumes:      
-      - type: volume
-        source: fabric_peer1_org2
-        target: /etc/hyperledger/fabric
-        volume:
-          nocopy: true
-    command: peer node start
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
     networks:
       fabric:
         aliases:
@@ -525,25 +419,16 @@ services:
       - ORDERER_KAFKA_RETRY_SHORTINTERVAL=1s
       - ORDERER_KAFKA_RETRY_SHORTTOTAL=30s
       - ORDERER_KAFKA_VERBOSE=true
-    volumes:      
-      - type: volume
-        source: fabric_orderer
-        target: /var/hyperledger/orderer
-        volume:
-          nocopy: true
-    depends_on:
-      - kafka0
-      - kafka1
-      - kafka2
-      - kafka3
     networks:
       fabric:
         aliases:
           - orderer.example.com
-    command: orderer start 
+    command: > 
+             bash -c 'mkdir -p /etc/hyperledger/fabric ; wget -r --no-parent -nH --cut-dirs=5 ftp://10.0.0.242/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com -P /var/hyperledger/orderer &&
+             orderer start'
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810]  
+        constraints: [node.hostname ==multivac]  
 
   cli:
     image: yeasy/hyperledger-fabric:1.1.0-alpha
@@ -562,29 +447,12 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-    volumes:      
-      - type: volume
-        source: fabric_scripts
-        target: /tmp/scripts
-        volume:
-          nocopy: true
-      - type: volume
-        source: fabric_crypto_config
-        target: /etc/hyperledger/fabric/crypto-config
-        volume:
-          nocopy: true
-      - type: volume
-        source: fabric_channel
-        target: /tmp/channel-artifacts
-        volume:
-          nocopy: true
-      - type: volume
-        source: fabric_examples
-        target: /opt/gopath/src/examples
-        volume:
-          nocopy: true
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-  #  command: bash -c 'cd /tmp; source scripts/func.sh; while true; do sleep 20170504; done'
+    command: > 
+             bash -c 'wget -r --no-parent -nH ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH  ftp://10.0.0.242/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH  ftp://10.0.0.242/crypto-config -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  ftp://10.0.0.242/examples -P /opt/gopath/src/examples '
     networks:
       fabric:
         aliases:
@@ -597,17 +465,11 @@ services:
     restart: always
     hostname: explorer
     image: yeasy/blockchain-explorer:latest # Till we have official image
-    command: bash -c 'sleep 10; cp config/config.json . ; node main.js'
+    command: > 
+             bash -c 'mkdir -p /blockchain-explorer/config ; wget -r --no-parent -nH --cut-dirs=1  ftp://10.0.0.242/explorer-artifacts -P /blockchain-explorer/config &&
+             sleep 10; cp config/config.json . ; node main.js'
     ports:
       - "8080:8080"
-    depends_on:
-      - mysql
-    volumes:      
-      - type: volume
-        source: fabric_explorer_artifacts
-        target: /blockchain-explorer/config
-        volume:
-          nocopy: true
     networks:
       fabric:
         aliases:
@@ -623,16 +485,12 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=fabricexplorer
-    volumes:      
-      - type: volume
-        source: fabric_explorer_artifacts
-        target: /docker-entrypoint-initdb.d/
-        volume:
-          nocopy: true
     networks:
       fabric:
         aliases:
           - mysql
+    command: > 
+             bash -c 'mkdir -p /docker-entrypoint-initdb.d/ ; wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/explorer-artifacts -P /docker-entrypoint-initdb.d/ '
     deploy:
       placement:
         constraints: [node.hostname == multivac ] 
