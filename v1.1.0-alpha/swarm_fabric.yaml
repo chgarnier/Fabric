@@ -57,7 +57,7 @@ services:
         aliases:
           - ca.org2.example.com
     command: > 
-             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/6eeaa87a59a2c14115a9df842c01a0a2b1bf6db2eed37f90c94f8a04462110a9_sk -b admin:adminpw -d'
     deploy:
       placement:
@@ -329,7 +329,7 @@ services:
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric   
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
@@ -339,11 +339,11 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     command: > 
-             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
-             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             bash -c ' rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
              peer node start ' 
     networks:
       fabric:
@@ -368,7 +368,7 @@ services:
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
       - CORE_PEER_ADDRESSAUTODETECT=false
-      - CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
       - CORE_PEER_GOSSIP_USELEADERELECTION=true
@@ -378,11 +378,11 @@ services:
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_CHIANCODE_LOGGING_LEVEL=INFO
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     command: > 
-             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
-             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
              peer node start ' 
     networks:
       fabric:
@@ -396,7 +396,7 @@ services:
     hostname: orderer.example.com
     image: yeasy/hyperledger-fabric-orderer:1.1.0-alpha
     environment:
-      - ORDERER_GENERAL_LOGLEVEL=INFO  # default: INFO
+      - ORDERER_GENERAL_LOGLEVEL=DEBUG  # default: INFO
       - ORDERER_GENERAL_LOGFORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0 # default: 127.0.0.1
       - ORDERER_GENERAL_GENESISMETHOD=file # default: provisional
@@ -436,7 +436,7 @@ services:
     tty: true
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
       - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
       - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
@@ -449,10 +449,10 @@ services:
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: > 
-             bash -c 'wget -r --no-parent -nH ftp://10.0.0.242/scripts -P /tmp/scripts &&
-             wget -r --no-parent -nH  ftp://10.0.0.242/channel-artifacts -P /tmp/channel-artifacts &&
-             wget -r --no-parent -nH  ftp://10.0.0.242/crypto-config -P /etc/hyperledger/fabric/crypto-config &&
-             wget -r --no-parent -nH  ftp://10.0.0.242/examples -P /opt/gopath/src/examples '
+             bash -c 'wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH --cut-dirs=2 ftp://10.0.0.242/kafka/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  --cut-dirs=1 ftp://10.0.0.242/examples -P /opt/gopath/src/examples; sleep 1000000000000 '
     networks:
       fabric:
         aliases:
@@ -466,7 +466,7 @@ services:
     hostname: explorer
     image: yeasy/blockchain-explorer:latest # Till we have official image
     command: > 
-             bash -c 'mkdir -p /blockchain-explorer/config ; wget -r --no-parent -nH --cut-dirs=1  ftp://10.0.0.242/explorer-artifacts -P /blockchain-explorer/config &&
+             bash -c 'mkdir /blockchain-explorer/config ; wget -r --no-parent -nH --cut-dirs=1  ftp://10.0.0.242/explorer-artifacts -P /blockchain-explorer/config ;
              sleep 10; cp config/config.json . ; node main.js'
     ports:
       - "8080:8080"
@@ -490,7 +490,7 @@ services:
         aliases:
           - mysql
     command: > 
-             bash -c 'mkdir -p /docker-entrypoint-initdb.d/ ; wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/explorer-artifacts -P /docker-entrypoint-initdb.d/ '
+             bash -c 'docker cp /docker-entrypoint-initdb.d/ ; apt-get install wget ; wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/explorer-artifacts -P /docker-entrypoint-initdb.d/ '
     deploy:
       placement:
         constraints: [node.hostname == multivac ] 
