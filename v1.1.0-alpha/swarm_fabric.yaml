@@ -320,7 +320,7 @@ services:
     hostname: peer0.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:7051
@@ -359,7 +359,7 @@ services:
     hostname: peer1.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:7051
