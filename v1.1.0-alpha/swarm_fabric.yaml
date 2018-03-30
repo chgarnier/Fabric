@@ -664,10 +664,12 @@ services:
   explorer:
     restart: always
     hostname: explorer
-    image: yeasy/blockchain-explorer:latest # Till we have official image
+    image: yeasy/blockchain-explorer:0.1.0-preview # Till we have official image
+    volumes:
+      - ./explorer-artifacts/config.json:/blockchain-explorer/config.json
+      - ./crypto-config:/blockchain-explorer/first-network/crypto-config
     command: > 
-             bash -c 'mkdir /blockchain-explorer/config ; wget -r --no-parent -nH --cut-dirs=1  ftp://10.0.0.242/explorer-artifacts -P /blockchain-explorer/config ;
-             sleep 10; cp config/config.json . ; node main.js'
+             bash -c ' sleep 10; node main.js'
     ports:
       - "8080:8080"
     networks:
@@ -681,7 +683,7 @@ services:
   mysql: # mysql service
     restart: always
     hostname: mysql
-    image: mysql:5.7
+    image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=fabricexplorer
@@ -689,8 +691,8 @@ services:
       fabric:
         aliases:
           - mysql
-    command: > 
-             bash -c 'docker cp /docker-entrypoint-initdb.d/ ; apt-get install wget ; wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/explorer-artifacts -P /docker-entrypoint-initdb.d/ '
+    volumes: 
+      - /data_hyperledger/fabric/explorer-artifacts:/docker-entrypoint-initdb.d/ 
     deploy:
       placement:
         constraints: [node.hostname == multivac ] 

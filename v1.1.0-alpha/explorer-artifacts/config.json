@@ -7,17 +7,17 @@
             "requests": "grpcs://peer0.org1.example.com:7051",
             "events": "grpcs://peer0.org1.example.com:7053",
             "server-hostname": "peer0.org1.example.com",
-            "tls_cacerts": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+            "tls_cacerts": "/first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
          },
          "peer2": {
             "requests": "grpcs://peer1.org1.example.com:7051",
             "events": "grpcs://peer1.org1.example.com:7053",
             "server-hostname": "peer1.org1.example.com",
-            "tls_cacerts": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt"
+            "tls_cacerts": "/first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt"
          },
          "admin": {
-            "key": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
-            "cert": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+            "key": "/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+            "cert": "/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
          }
       },
       "org2": {
@@ -27,17 +27,17 @@
            "requests": "grpcs://peer0.org2.example.com:7051",
            "events": "grpcs://peer0.org2.example.com:7053",
            "server-hostname": "peer0.org2.example.com",
-           "tls_cacerts": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
+           "tls_cacerts": "/first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
         },
         "peer2": {
            "requests": "grpcs://peer1.org2.example.com:7051",
            "events": "grpcs://peer1.org2.example.com:7053",
            "server-hostname": "peer1.org2.example.com",
-           "tls_cacerts": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt"
+           "tls_cacerts": "/first-network/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt"
         },
         "admin": {
-           "key": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore",
-           "cert": "/blockchain-explorer/config/first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts"
+           "key": "/first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore",
+           "cert": "/first-network/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts"
         }
       }
    },
