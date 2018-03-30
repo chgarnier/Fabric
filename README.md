@@ -1,14 +1,25 @@
 # Comment déployer et manager un réseau blockchain Hyperledger Fabric avec Docker Swarm
 
-Vous trouverez ici l'ensemeble des éléments et explications nécessaires au déploiement d'Hyperledger Fabric sur plusieurs machines distantes et sur des réseaux différents. Nous utilisons pour cela Docker Swarm afin de gérer et de manager l'insfrastructure blockchain. De nombreux éléments et scripts provient d'ici : https://github.com/yeasy/docker-compose-files/tree/master/hyperledger_fabric. 
+Vous trouverez ici l'ensemble des éléments et explications nécessaires au déploiement d'Hyperledger Fabric sur plusieurs machines distantes et sur des réseaux différents. 
 
+Nous considérons ici les acteurs suivants : 
+  - l'acteur qui déploie et manage le réseau blockhain Hyperledger Fabric : Opérateur.
+  - les organisations participant au réseau blockchain Hyperledger Fabric : Org1, Org2, Org3, Org4.
+  
+Pour le déploiement et le management de l'insfrastructure blockchain nous utilisons Docker Swarm.  
+L'opérateur a ainsi le rôle de manager du réseau Swarm et chacun des noeuds physiques des organisations a le rôle d'un worker. 
+Le réseau docker Swarm sera donc composé de 5 noeuds : 1 manager et 4 workers. 
 
-Dans notre exemple, nous allons déployer un résau Hyperledger FABRIC composé de :
-  - 3 organisations possèdant chacune deux peer, une autorité de certification et un peer "command line" qui seront localisés sur le même noeud physique. 
-  - 1 noeud orderer avec un consensus de type kafka,
-  - l'explorateur de blockchain Hyperledger Explorer.
+Chacune des organisations possèdera : 
+  - 2 peers qui maintiendront le ledger et permettront le déploiement du chaincode,
+  - une autorité de certification,
+  - une "interface command line" pour interagir avec les peers.
+Ainsi 4 containeurs dockers seront déployés sur chacun des noeuds physiques des organisations. 
 
-Le réseau docker Swarm sera lui composé de 5 noeuds : 1 manager et 4 workers (un par organisation et un pour l'orderer). 
+Le réseau Hyperledger Fabric comprendra également : 1 noeud orderer avec un consensus de type kafka délployé sur le manager et l'explorateur de blockchain Hyperledger Explorer. 
+
+De nombreux éléments et scripts provient d'ici : https://github.com/yeasy/docker-compose-files/tree/master/hyperledger_fabric. 
+
 
 # Etape à suivre
 
