@@ -6,9 +6,7 @@ Nous considérons ici les acteurs suivants :
   - l'acteur qui déploie et manage le réseau blockhain Hyperledger Fabric : Opérateur.
   - les organisations participant au réseau blockchain Hyperledger Fabric : Org1, Org2, Org3, Org4.
   
-Pour le déploiement et le management de l'insfrastructure blockchain nous utilisons Docker Swarm.  
-L'opérateur a ainsi le rôle de manager du réseau Swarm et chacun des noeuds physiques des organisations a le rôle d'un worker. 
-Le réseau docker Swarm sera donc composé de 5 noeuds : 1 manager et 4 workers. 
+Pour le déploiement et le management de l'insfrastructure blockchain nous utilisons Docker Swarm. L'opérateur a ainsi le rôle de manager du réseau Swarm et chacun des noeuds physiques des organisations ont le rôle d'un worker. Le réseau docker Swarm sera donc composé de 5 noeuds : 1 manager et 4 workers. 
 
 Chacune des organisations possèdera : 
   - 2 peers qui maintiendront le ledger et permettront le déploiement du chaincode,
