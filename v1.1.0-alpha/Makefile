@@ -5,7 +5,7 @@ HLF_MODE ?= kafka
 HLF_VERSION ?= 1.1.0-alpha
 
 CODE_BUILD_WAIT=40 # time to wait to build peer/orderer from local code
-NETWORK_INIT_WAIT=2 # time to wait the fabric network finish initialization
+NETWORK_INIT_WAIT=240 # time to wait the fabric network finish initialization
 
 COMPOSE_FILE ?= "swarm_fabric.yaml"
 
@@ -23,19 +23,23 @@ test:
 
 ready: # create/join channel, install/instantiate cc
 	make stop
+	
+	@echo "********* First step : Generate artifacts *********"
+
 	make gen_config  # Will ignore if local config path exists
+	make data_hyperledger
+		
+	@echo "********* Second step : Network Init ********* "
 	make start
+	@echo ""********* Waiting for network init...********* "
+	@sleep ${NETWORK_INIT_WAIT}
 
-	if [ "$(HLF_MODE)" = "dev" ]; then \
-			sleep ${CODE_BUILD_WAIT}; \
-	else \
-			sleep ${NETWORK_INIT_WAIT}; \
-	fi
-
+	@echo "********* Create channel "businesschannel ********* "
 	make test_channel_create
 	make test_channel_join
 	make update_anchors
 
+	@echo "********* Install, instantiate and test chaincode "********* "
 	make test_cc_install
 	make test_cc_instantiate
 	make test_cc_invoke_query
@@ -53,22 +57,23 @@ ready: # create/join channel, install/instantiate cc
 
 	make logs_save
 
-	@echo "Now the fabric network is ready to play"
-	@echo "run 'make cli' to enter into the fabric-cli container."
-	@echo "run 'make stop' when done."
+	@echo "********* Now the fabric network is ready to play *********"
+	@echo "********* run 'make cli' to enter into the fabric-cli container *********"
+	@echo "********* run 'make stop' when done *********"
 
 restart: stop start
+
+data_hyperledger: # create data_hyperledger container 
+	bash ./data_hyperledger.sh
 
 start: # bootup the fabric network
 	@echo "Start a fabric network with ${COMPOSE_FILE}..."
 	@make clean
 	@docker stack deploy -c swarm_fabric.yaml fabric
 
-stop: # stop the fabric network
+stop: # stop and kill the fabric network
 	@echo "Stop the fabric network with ${COMPOSE_FILE}..."
 	@docker stack rm fabric
-
-chaincode_dev: restart chaincode_init test_cc_peer0 stop
 
 ################## Channel testing operations ################
 
@@ -142,6 +147,7 @@ clean: # clean up containers
 	@-docker ps -a | awk '$$2 ~ /dev-peer/ { print $$1 }' | xargs -r -I {} docker rm -f {}
 	@-docker images | awk '$$1 ~ /dev-peer/ { print $$3 }' | xargs -r -I {} docker rmi -f {}
 
+
 env_clean: # clean up environment
 	@echo "Clean all images and containers"
 	bash scripts/env_clean.sh
@@ -164,9 +170,4 @@ gen_config: # generate config artifacts
 download: # download required images
 	@echo "Download Docker images"
 	bash scripts/download_images.sh
-
-################## chaincode dev mode ################
-chaincode_init: # start chaincode in dev mode and do install/instantiate
-	@echo "Install and instantiate cc example02 on the fabric dev network"
-	@docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/init_chaincode_dev.sh"
 

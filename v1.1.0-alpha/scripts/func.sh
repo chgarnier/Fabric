@@ -339,7 +339,7 @@ chaincodeInstall () {
 		>&log.txt
 	rc=$?
 	[ $rc -ne 0 ] && cat log.txt
-  verifyResult $rc "Chaincode installation on remote org ${org}/peer$peer has Failed"
+ verifyResult $rc "Chaincode installation on remote org ${org}/peer$peer has Failed"
 	echo "=== Chaincode is installed on remote peer$peer === "
 }
 

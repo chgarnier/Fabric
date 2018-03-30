@@ -82,9 +82,9 @@ docker run \
 	--name $GEN_CONTAINER \
 	-e "CONFIGTX_LOGGING_LEVEL=DEBUG" \
 	-e "CONFIGTX_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}" \
-	-v $PWD/org3/crypto-config.yaml:${FABRIC_CFG_PATH}/crypto-config.yaml \
+	-v $PWD/org5/crypto-config.yaml:${FABRIC_CFG_PATH}/crypto-config.yaml \
 	-v $PWD/${CRYPTO_CONFIG}:${FABRIC_CFG_PATH}/${CRYPTO_CONFIG} \
-	-v $PWD/org3/configtx.yaml:${FABRIC_CFG_PATH}/configtx.yaml \
+	-v $PWD/org5/configtx.yaml:${FABRIC_CFG_PATH}/configtx.yaml \
 	-v $PWD/${MODE}/${CHANNEL_ARTIFACTS}:/tmp/${CHANNEL_ARTIFACTS} \
 	${GEN_IMG} bash -c 'while true; do sleep 20171001; done'
 
@@ -93,7 +93,7 @@ if [ "${GEN_CRYPTO}" = "true" ]; then
 	gen_con_exec cryptogen generate --config=$FABRIC_CFG_PATH/crypto-config.yaml --output ${FABRIC_CFG_PATH}/${CRYPTO_CONFIG}
 fi
 
-[ -f ${MODE}/${CHANNEL_ARTIFACTS}/${ORG3MSP}.json ] || gen_con_exec bash -c "configtxgen -printOrg ${ORG3MSP} >/tmp/${CHANNEL_ARTIFACTS}/${ORG3MSP}.json"
+[ -f ${MODE}/${CHANNEL_ARTIFACTS}/${ORG3MSP}.json ] || gen_con_exec bash -c "configtxgen -printOrg ${ORG5MSP} >/tmp/${CHANNEL_ARTIFACTS}/${ORG3MSP}.json"
 
 echo_b "Remove the container $GEN_CONTAINER" && docker rm -f $GEN_CONTAINER
 

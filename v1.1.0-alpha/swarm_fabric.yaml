@@ -1,7 +1,7 @@
 # This compose file will start a Hyperledger Fabric 1.0 MVE, including
-# * 2 ca 
+# * 4 ca 
 # * 1 orderer with 4 kafka nodes and 3 zookeeper nodes
-# * 4 peers in 2 orgs
+# * 4 orgs with 2 peers each
 # * cli for testing and interacting 
 #
 # We use Docker Swarm to deploy and manage Hyperledger Fabric Network
@@ -17,7 +17,7 @@ networks:
 
 
 services:
-# CAr services, at least one CA per organization 
+# CA services, at least one CA per organization 
   ca_org1_example_com:
     image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
     restart: always
@@ -28,14 +28,14 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true 
       - FABRIC_CA_SERVER_CA_NAME=ca-org1
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ff62d157ad938150d7b49b92df7e61ed2fae666c605a25f8e2b6bf14aeabb09c_sk 
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/d821ea9fceb2b4e4b01fc4a671c5cce58615cf9f03b53e6b365d5f27054acbf0_sk # to change if keyfiles change
     networks:
       fabric:
         aliases:
           - ca.org1.example.com 
     command: > 
              sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
-             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/ff62d157ad938150d7b49b92df7e61ed2fae666c605a25f8e2b6bf14aeabb09c_sk -b admin:adminpw -d'
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/d821ea9fceb2b4e4b01fc4a671c5cce58615cf9f03b53e6b365d5f27054acbf0_sk -b admin:adminpw -d'
     deploy:
       placement:
         constraints: [node.hostname ==multivac]
@@ -51,14 +51,58 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true 
       - FABRIC_CA_SERVER_CA_NAME=ca-org2
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/6eeaa87a59a2c14115a9df842c01a0a2b1bf6db2eed37f90c94f8a04462110a9_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/011c1aaeaba837dc1bc404854359f495b48394f4ee70c58295c97299e8d46552_sk # to change if keyfiles change
     networks:
       fabric:
         aliases:
           - ca.org2.example.com
     command: > 
-             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
-             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/6eeaa87a59a2c14115a9df842c01a0a2b1bf6db2eed37f90c94f8a04462110a9_sk -b admin:adminpw -d'
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/011c1aaeaba837dc1bc404854359f495b48394f4ee70c58295c97299e8d46552_sk -b admin:adminpw -d'
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  ca_org3_example_com:
+    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
+    restart: always
+    hostname: ca.org3.example.com
+    environment:
+      - FABRIC_CA_VERSION=1.1.0
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true 
+      - FABRIC_CA_SERVER_CA_NAME=ca-org3
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8e0e45bd79d40a885e7420fb5556ee031726c3f7f715070cfc060e910d3864b8_sk # to change if keyfiles change
+    networks:
+      fabric:
+        aliases:
+          - ca.org3.example.com
+    command: > 
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4  ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org3.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8e0e45bd79d40a885e7420fb5556ee031726c3f7f715070cfc060e910d3864b8_sk -b admin:adminpw -d'
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  ca_org4_example_com:
+    image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
+    restart: always
+    hostname: ca.org3.example.com
+    environment:
+      - FABRIC_CA_VERSION=1.1.0
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_TLS_ENABLED=true 
+      - FABRIC_CA_SERVER_CA_NAME=ca-org4
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8f6c760786f4e792e9959dbdd3f7122d2f46911b0f61f102fcec36f482eb2329_sk # to change if keyfiles change
+    networks:
+      fabric:
+        aliases:
+          - ca.org3.example.com
+    command: > 
+             sh -c ' mkdir -p /etc/hyperledger/fabric-ca-server-config ; wget -r --no-parent -nH --cut-dirs=4  ftp://10.0.0.242/crypto-config/peerOrganizations/org4.example.com/ca -P /etc/hyperledger/fabric-ca-server-config &&
+             fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8f6c760786f4e792e9959dbdd3f7122d2f46911b0f61f102fcec36f482eb2329_sk -b admin:adminpw -d'
     deploy:
       placement:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
@@ -342,8 +386,8 @@ services:
       - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     command: > 
-             bash -c ' rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
-             wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             bash -c ' rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
              peer node start ' 
     networks:
       fabric:
@@ -381,13 +425,169 @@ services:
       - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
       - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
     command: > 
-             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
-             wget -r --no-parent -nH --cut-dirs=6 --level=14 --timeout=30000 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls -P /etc/hyperledger/fabric/tls &&  
              peer node start ' 
     networks:
       fabric:
         aliases:
           - peer1.org2.example.com
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  peer0_org3_example_com:
+    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    restart: always
+    hostname: peer0.org3.example.com
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_PEER_ID=peer0.org3.example.com
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.example.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org3.example.com:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
+        #- CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
+    networks:
+      fabric:
+        aliases:
+          - peer0.org3.example.com
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  peer1_org3_example_com:
+    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    restart: always
+    hostname: peer1.org3.example.com
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_PEER_ID=peer1.org3.example.com
+      - CORE_PEER_ADDRESS=peer1.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org3.example.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org3.example.com:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
+        #- CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
+    networks:
+      fabric:
+        aliases:
+          - peer1.org3.example.com
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  peer0_org4_example_com:
+    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    restart: always
+    hostname: peer0.org4.example.com
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_PEER_ID=peer0.org4.example.com
+      - CORE_PEER_ADDRESS=peer0.org4.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org4.example.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.org4.example.com:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org4.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org4MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
+        #- CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
+    networks:
+      fabric:
+        aliases:
+          - peer0.org4.example.com
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+  peer1_org4_example_com:
+    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    restart: always
+    hostname: peer1.org4.example.com
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_PEER_ID=peer1.org4.example.com
+      - CORE_PEER_ADDRESS=peer1.org4.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org4.example.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer1.org4.example.com:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org4.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org4MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric  
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false  
+        #- CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    command: > 
+             bash -c 'rm -rf /etc/hyperledger/fabric/ ; mkdir -p /etc/hyperledger/fabric/msp ;  mkdir -p /etc/hyperledger/fabric/tls ;  wget -r --no-parent -nH --cut-dirs=6 --level=14 ftp://10.0.0.242/crypto-config/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/msp -P /etc/hyperledger/fabric/msp &&
+             wget -r --no-parent -nH --cut-dirs=6 --level=14  ftp://10.0.0.242/crypto-config/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/tls -P /etc/hyperledger/fabric/tls &&  
+             peer node start ' 
+    networks:
+      fabric:
+        aliases:
+          - peer1.org4.example.com
     deploy:
       placement:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 

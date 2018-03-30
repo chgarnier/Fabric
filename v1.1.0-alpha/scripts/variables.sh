@@ -32,6 +32,10 @@ ORG2_ADMIN_MSP=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.exam
 ORG1MSP=Org1MSP
 ORG2MSP=Org2MSP
 ORG3MSP=Org3MSP
+ORG4MSP=Org4MSP
+ORG5MSP=Org5MSP
+
+
 
 # Node URLS
 ORDERER_URL="orderer.example.com:7050"
