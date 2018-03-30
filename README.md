@@ -29,6 +29,17 @@ Pour l'utilisation de docker Swarm, les ports suivant doivent être ouverts et/o
 - TCP et UDP port 7946 
 - UDP port 4789 pour le traffic réseau VXLAN overlay
 
+## Configuration des noeuds participant au cluster Swarm
+
+Installer la dernière version de docker sur les noeuds worker et le manager: https://docs.docker.com/install/linux/docker-ce/ubuntu/#extra-steps-for-aufs.
+
+Sur chacun des workers (noeuds à partir desquels des chaincodes seront déployés), il nous faut configurer le deamon docker afin qu'il écoute sur le socket lié à l'adresse l'IP local du noeud worker : 
+```bash
+sudo dockerd -H unix:///var/run/docker.sock -H tcp://192.168.59.106
+```
+Il faut 192.168.59.106 par l'adresse IP local du worker. 
+Cette configuration est nécessaire car un chaincode vit dans un container docker propre. Ainsi le chaincode n'a pas un accès direct au ledger qui est sur le peer. Le container docker "peer" déployant ce chaincode va donc déployer un container docker sur le worker concerné, il faut donc qu'il puisse avoir accès au deamon docker du worker. 
+
 ## Configuration du cluster docker swarm 
 Il nous faut maintenant créer un cluster docker swarm.
 
@@ -52,15 +63,18 @@ docker swarm join --token SWMTKN-1-0dnph4r0j3cbhe5vjx229h2snhkpoz5b62yt90vr3zcd9
 ```
 Il faut remplacer xx.xx.xx.xx par l'adresse IP publique du worker et 185.6.xxx.xxx poar l'adresse IP publique du manager. 
 
-### Swarm network
-Il noous faut maintenant créer le réseau swarm sur lequel communiqueront les containeurs docker. 
+### Création du réseau virtuel VXLAN
+
+Il nous faut maintenant créer le réseau swarm sur lequel communiqueront de manière sécurisée les containeurs docker. 
 
 ```bash
 docker network create --attachable --driver overlay fabric
 ```
+Pour plus d'informations sur les réseaux overlay sous Docker Swarm : https://docs.docker.com/network/overlay/
 
-2) Mise en place d'un serveur NFS sur le master SWARM
+## Configuration du réseau Hyperledger Fabric
 
+### 
 3) Génération matériel cryptographique
 
 4) Déploiement du réseau
