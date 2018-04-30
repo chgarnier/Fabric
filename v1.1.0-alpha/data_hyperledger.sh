@@ -18,4 +18,4 @@ sudo chmod -R +666 /data_hyperledger/fabric
 
 
 # Déploiement du containeur docker "data_hyperledger"
-docker run --ip 10.0.0.242 --name data_hyperledger --network=fabric -d -p 20-21:20-21 -p 65500-65515:65500-65515 -v /data_hyperledger/fabric:/var/ftp:ro inanimate/vsftpd-anon
+docker run --ip 10.0.0.242 --name data_hyperledger --network=fabricnet -d -p 20-21:20-21 -p 65500-65515:65500-65515 -v /data_hyperledger/fabric:/var/ftp:ro inanimate/vsftpd-anon

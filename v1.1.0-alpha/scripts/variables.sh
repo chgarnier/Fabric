@@ -8,7 +8,7 @@ APP_CHANNEL="businesschannel"
 
 # Client cmd execute timeout and retry times
 TIMEOUT="30"
-MAX_RETRY=5
+MAX_RETRY=10
 
 # Organization and peers
 ORGS=( 1 2 )
@@ -43,6 +43,16 @@ ORG1_PEER0_URL="peer0.org1.example.com:7051"
 ORG1_PEER1_URL="peer1.org1.example.com:7051"
 ORG2_PEER0_URL="peer0.org2.example.com:7051"
 ORG2_PEER1_URL="peer1.org2.example.com:7051"
+
+
+# Chaincode tuna-app related
+CC_02_NAME="tuna-app"
+CC_02_PATH="examples/chaincode/go/chaincode_tuna"
+CC_02_INIT_ARGS='{"Args":[""]}'
+CC_02_UPGRADE_ARGS='{"Args":["upgrade","a","100","b","200"]}'
+CC_02_INVOKE_ARGS='{"function":"initLedger","Args":[""]}'
+CC_02_QUERY_ARGS='{"function":"queryAllTuna","Args":[""]}'
+
 
 # Chaincode exp02 related
 CC_02_NAME="exp02"

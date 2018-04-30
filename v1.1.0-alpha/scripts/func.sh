@@ -168,7 +168,7 @@ channelJoinWithRetry () {
 	local rc=$?
 	while [ ${counter} -lt ${MAX_RETRY} -a ${rc} -ne 0 ]; do
 		echo "peer${peer} failed to join channel ${channel}, retry after 2s"
-		sleep 2
+		sleep 10
 		channelJoinAction ${channel}
 		rc=$?
 		let counter=${counter}+1

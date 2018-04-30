@@ -13,7 +13,7 @@ version: '3.2'
 networks:
   fabric:
     external:
-      name: fabric
+      name: fabricnet
 
 
 services:
@@ -38,7 +38,7 @@ services:
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/d821ea9fceb2b4e4b01fc4a671c5cce58615cf9f03b53e6b365d5f27054acbf0_sk -b admin:adminpw -d'
     deploy:
       placement:
-        constraints: [node.hostname ==multivac]
+        constraints: [node.hostname ==gilles-NG-VX5-591G-52MP]
 
 
   ca_org2_example_com:
@@ -61,7 +61,7 @@ services:
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/011c1aaeaba837dc1bc404854359f495b48394f4ee70c58295c97299e8d46552_sk -b admin:adminpw -d'
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   ca_org3_example_com:
     image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
@@ -105,7 +105,7 @@ services:
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8f6c760786f4e792e9959dbdd3f7122d2f46911b0f61f102fcec36f482eb2329_sk -b admin:adminpw -d'
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname == multivac] 
 
 # ZooKeeper services, at least 3 nodes
   zookeeper0:
@@ -284,7 +284,7 @@ services:
     restart: always
     hostname: peer0.org1.example.com
     environment:
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=88.168.85.7:2375
       - FABRIC_CFG_PATH=
       - CORE_PEER_ID=peer0.org1.example.com
       - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
@@ -316,7 +316,7 @@ services:
           - peer0.org1.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==gilles-NG-VX5-591G-52MP] 
 
 
   peer1_org1_example_com:
@@ -325,7 +325,7 @@ services:
     hostname: peer1.org1.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=88.168.85.7:2375
       - CORE_PEER_ID=peer1.org1.example.com
       - CORE_PEER_ADDRESS=peer1.org1.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:7051
@@ -356,7 +356,7 @@ services:
           - peer1.org1.example.com
     deploy:
       placement:
-        constraints: [node.hostname == multivac] 
+        constraints: [node.hostname == gilles-NG-VX5-591G-52MP] 
 
   peer0_org2_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -364,7 +364,7 @@ services:
     hostname: peer0.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_VM_ENDPOINT=10.0.1.30:2375
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:7051
@@ -395,7 +395,7 @@ services:
           - peer0.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   peer1_org2_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -403,7 +403,7 @@ services:
     hostname: peer1.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_VM_ENDPOINT=10.0.1.30:2375
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:7051
@@ -434,7 +434,7 @@ services:
           - peer1.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   peer0_org3_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -520,7 +520,7 @@ services:
     hostname: peer0.org4.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer0.org4.example.com
       - CORE_PEER_ADDRESS=peer0.org4.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org4.example.com:7051
@@ -551,7 +551,7 @@ services:
           - peer0.org4.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname ==multivac] 
 
   peer1_org4_example_com:
     image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
@@ -559,7 +559,7 @@ services:
     hostname: peer1.org4.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.0.44:2375
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer1.org4.example.com
       - CORE_PEER_ADDRESS=peer1.org4.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org4.example.com:7051
@@ -590,7 +590,7 @@ services:
           - peer1.org4.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+        constraints: [node.hostname ==multivac] 
 
   orderer_example_com:  # There  can be multiple orderers
     hostname: orderer.example.com
@@ -629,6 +629,137 @@ services:
     deploy:
       placement:
         constraints: [node.hostname ==multivac]  
+
+
+
+  cli_org1:
+    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    hostname: fabric.cli.org1
+    tty: true
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
+      - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+      - CORE_PEER_ID=fabric.cli.org1
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051 # default to operate on peer0.org1
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: > 
+             bash -c 'wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH --cut-dirs=2 ftp://10.0.0.242/kafka/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/peerOrganizations/org1.example.com -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/ordererOrganizations -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  --cut-dirs=1 ftp://10.0.0.242/examples -P /opt/gopath/src/examples; sleep 1000000000000 '
+    networks:
+      fabric:
+        aliases:
+          - fabric.cli.org1
+    deploy:
+      placement:
+        constraints: [node.hostname ==gilles-NG-VX5-591G-52MP] 
+
+  cli_org2:
+    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    hostname: fabric.cli.org2
+    tty: true
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
+      - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+      - CORE_PEER_ID=fabric.cli.org2
+      - CORE_PEER_ADDRESS=peer0.org2.example.com:7051 # default to operate on peer0.org1
+      - CORE_PEER_LOCALMSPID=Org2MSP
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: > 
+             bash -c 'wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH --cut-dirs=2 ftp://10.0.0.242/kafka/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/ordererOrganizations -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  --cut-dirs=1 ftp://10.0.0.242/examples -P /opt/gopath/src/examples; sleep 1000000000000 '
+    networks:
+      fabric:
+        aliases:
+          - fabric.cli.org2
+    deploy:
+      placement:
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
+
+  cli_org3:
+    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    hostname: fabric.cli.org3
+    tty: true
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
+      - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+      - CORE_PEER_ID=fabric.cli.org3
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051 # default to operate on peer0.org1
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: > 
+             bash -c 'wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH --cut-dirs=2 ftp://10.0.0.242/kafka/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/peerOrganizations/org3.example.com -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/ordererOrganizations -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  --cut-dirs=1 ftp://10.0.0.242/examples -P /opt/gopath/src/examples; sleep 1000000000000 '
+    networks:
+      fabric:
+        aliases:
+          - fabric.cli.org3
+    deploy:
+      placement:
+        constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
+
+
+  cli_org4:
+    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    hostname: fabric.cli.org4
+    tty: true
+    environment:
+      - FABRIC_CFG_PATH=
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_PEER_TLS_ENABLED=true  # to enable TLS, change to true
+      - ORDERER_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+      - CORE_PEER_ID=fabric.cli.org4
+      - CORE_PEER_ADDRESS=peer0.org4.example.com:7051 # default to operate on peer0.org1
+      - CORE_PEER_LOCALMSPID=Org4MSP
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org4.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org4.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org4.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/users/Admin@org4.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: > 
+             bash -c 'wget -r --no-parent -nH --cut-dirs=1 ftp://10.0.0.242/scripts -P /tmp/scripts &&
+             wget -r --no-parent -nH --cut-dirs=2 ftp://10.0.0.242/kafka/channel-artifacts -P /tmp/channel-artifacts &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/peerOrganizations/org2.example.com -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH --cut-dirs=1 --level 14 ftp://10.0.0.242/crypto-config/ordererOrganizations -P /etc/hyperledger/fabric/crypto-config &&
+             wget -r --no-parent -nH  --cut-dirs=1 ftp://10.0.0.242/examples -P /opt/gopath/src/examples; sleep 1000000000000 '
+    networks:
+      fabric:
+        aliases:
+          - fabric.cli.org4
+    deploy:
+      placement:
+        constraints: [node.hostname ==multivac] 
 
   cli:
     image: yeasy/hyperledger-fabric:1.1.0-alpha
