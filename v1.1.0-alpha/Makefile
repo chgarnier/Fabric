@@ -120,16 +120,16 @@ test_cc_invoke_query: # test user chaincode on all peers
 
 test_qscc: # test qscc queries
 	@echo "Test QSCC query"
-	@docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/test_qscc.sh"
+	@docker exec -it fabric_cli.1.$$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/test_qscc.sh"
 
 test_lscc: # test lscc quries
 	@echo "Test LSCC query"
-	@docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/test_lscc.sh"
+	@docker exec -it fabric_cli.1.$$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q)  bash -c "cd /tmp; bash scripts/test_lscc.sh"
 
 # FIXME: docker doesn't support wildcard in cp right now
 test_fetch_blocks: # test fetching channel blocks fetch
 	@echo "Test fetching block files"
-	@docker exec -it fabric_cli.1.$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q) bash -c "cd /tmp; bash scripts/test_fetch_blocks.sh"
+	@docker exec -it fabric_cli.1.$$(docker service ps -f 'name=fabric_cli.1' fabric_cli -q)  bash -c "cd /tmp; bash scripts/test_fetch_blocks.sh"
 
 ################## Env setup related, no need to see usually ################
 

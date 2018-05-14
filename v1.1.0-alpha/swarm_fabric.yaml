@@ -61,7 +61,7 @@ services:
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/011c1aaeaba837dc1bc404854359f495b48394f4ee70c58295c97299e8d46552_sk -b admin:adminpw -d'
     deploy:
       placement:
-        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
+        constraints: [node.hostname ==multivac] 
 
   ca_org3_example_com:
     image: yeasy/hyperledger-fabric-ca:1.1.0-alpha
@@ -105,74 +105,15 @@ services:
              fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org4.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8f6c760786f4e792e9959dbdd3f7122d2f46911b0f61f102fcec36f482eb2329_sk -b admin:adminpw -d'
     deploy:
       placement:
-        constraints: [node.hostname == multivac] 
+        constraints: [node.hostname == Docker-ADDEO-Online-1] 
 
-# ZooKeeper services, at least 3 nodes
-  zookeeper0:
-    image: hyperledger/fabric-zookeeper:x86_64-0.4.5
-    restart: always
-    tty: true
-    hostname: zookeeper0
-    expose:
-      - '2181'
-      - '2888'
-      - '3888'
-    environment:
-      - ZOO_MY_ID=1
-      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
-    networks:
-      fabric:
-        aliases:
-          - zookeeper0
-    deploy:
-      placement:
-        constraints: [node.hostname ==multivac]
 
-  zookeeper1:
-    image: hyperledger/fabric-zookeeper:x86_64-0.4.5
-    restart: always
-    tty: true
-    hostname: zookeeper1
-    expose:
-      - '2181'
-      - '2888'
-      - '3888'
-    environment:
-      - ZOO_MY_ID=2
-      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zookeeper2:2888:3888
-    networks:
-      fabric:
-        aliases:
-          - zookeeper1
-    deploy:
-      placement:
-        constraints: [node.hostname == multivac ] 
-
-  zookeeper2:
-    image: hyperledger/fabric-zookeeper:x86_64-0.4.5
-    restart: always
-    tty: true
-    hostname: zookeeper2
-    expose:
-      - '2181'
-      - '2888'
-      - '3888'
-    environment:
-      - ZOO_MY_ID=3
-      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=0.0.0.0:2888:3888
-    networks:
-      fabric:
-        aliases:
-          - zookeeper2
-    deploy:
-      placement:
-        constraints: [node.hostname ==multivac]
 
 
 # Kafka services, at least 4 node to tolerant work with 1 node failure
   kafka0:
     hostname: kafka0
-    image: hyperledger/fabric-kafka:x86_64-0.4.5
+    image: hyperledger/fabric-kafka
     restart: always
     tty: true
     environment:
@@ -199,7 +140,7 @@ services:
 
   kafka1:
     hostname: kafka1
-    image: hyperledger/fabric-kafka:x86_64-0.4.5
+    image: hyperledger/fabric-kafka
     restart: always
     tty: true
     environment:
@@ -226,7 +167,7 @@ services:
 
   kafka2:
     hostname: kafka2
-    image: hyperledger/fabric-kafka:x86_64-0.4.5
+    image: hyperledger/fabric-kafka
     restart: always
     tty: true
     environment:
@@ -253,7 +194,7 @@ services:
 
   kafka3:
     hostname: kafka3
-    image: hyperledger/fabric-kafka:x86_64-0.4.5
+    image: hyperledger/fabric-kafka
     restart: always
     tty: true
     environment:
@@ -280,7 +221,7 @@ services:
 
 
   peer0_org1_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer0.org1.example.com
     environment:
@@ -316,11 +257,11 @@ services:
           - peer0.org1.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==gilles-NG-VX5-591G-52MP] 
+        constraints: [node.hostname ==gilles-NG-VX5-591G-52MP]] 
 
 
   peer1_org1_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer1.org1.example.com
     environment:
@@ -356,15 +297,15 @@ services:
           - peer1.org1.example.com
     deploy:
       placement:
-        constraints: [node.hostname == gilles-NG-VX5-591G-52MP] 
+        constraints: [node.hostname == gilles-NG-VX5-591G-52MP]] 
 
   peer0_org2_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer0.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=10.0.1.30:2375
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer0.org2.example.com
       - CORE_PEER_ADDRESS=peer0.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.example.com:7051
@@ -395,15 +336,15 @@ services:
           - peer0.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
+        constraints: [node.hostname ==multivac] 
 
   peer1_org2_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer1.org2.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=10.0.1.30:2375
+      - CORE_VM_ENDPOINT=192.168.73.52:2375
       - CORE_PEER_ID=peer1.org2.example.com
       - CORE_PEER_ADDRESS=peer1.org2.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:7051
@@ -434,10 +375,10 @@ services:
           - peer1.org2.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
+        constraints: [node.hostname ==multivac] 
 
   peer0_org3_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer0.org3.example.com
     environment:
@@ -476,7 +417,7 @@ services:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
 
   peer1_org3_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer1.org3.example.com
     environment:
@@ -515,12 +456,12 @@ services:
         constraints: [node.hostname ==jmetairie-Precision-Tower-5810] 
 
   peer0_org4_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer0.org4.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=10.0.1.30:2375
       - CORE_PEER_ID=peer0.org4.example.com
       - CORE_PEER_ADDRESS=peer0.org4.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org4.example.com:7051
@@ -551,15 +492,15 @@ services:
           - peer0.org4.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   peer1_org4_example_com:
-    image: yeasy/hyperledger-fabric-peer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-peer:1.1.0
     restart: always
     hostname: peer1.org4.example.com
     environment:
       - FABRIC_CFG_PATH=
-      - CORE_VM_ENDPOINT=192.168.73.52:2375
+      - CORE_VM_ENDPOINT=10.0.1.30:2375
       - CORE_PEER_ID=peer1.org4.example.com
       - CORE_PEER_ADDRESS=peer1.org4.example.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org4.example.com:7051
@@ -590,11 +531,11 @@ services:
           - peer1.org4.example.com
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   orderer_example_com:  # There  can be multiple orderers
     hostname: orderer.example.com
-    image: yeasy/hyperledger-fabric-orderer:1.1.0-alpha
+    image: yeasy/hyperledger-fabric-orderer
     environment:
       - ORDERER_GENERAL_LOGLEVEL=DEBUG  # default: INFO
       - ORDERER_GENERAL_LOGFORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
@@ -633,7 +574,7 @@ services:
 
 
   cli_org1:
-    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    image: yeasy/hyperledger-fabric:1.1.0
     hostname: fabric.cli.org1
     tty: true
     environment:
@@ -665,7 +606,7 @@ services:
         constraints: [node.hostname ==gilles-NG-VX5-591G-52MP] 
 
   cli_org2:
-    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    image: yeasy/hyperledger-fabric:1.1.0
     hostname: fabric.cli.org2
     tty: true
     environment:
@@ -694,10 +635,10 @@ services:
           - fabric.cli.org2
     deploy:
       placement:
-        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
+        constraints: [node.hostname ==multivac] 
 
   cli_org3:
-    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    image: yeasy/hyperledger-fabric:1.1.0
     hostname: fabric.cli.org3
     tty: true
     environment:
@@ -730,7 +671,7 @@ services:
 
 
   cli_org4:
-    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    image: yeasy/hyperledger-fabric:1.1.0
     hostname: fabric.cli.org4
     tty: true
     environment:
@@ -759,10 +700,10 @@ services:
           - fabric.cli.org4
     deploy:
       placement:
-        constraints: [node.hostname ==multivac] 
+        constraints: [node.hostname ==Docker-ADDEO-Online-1] 
 
   cli:
-    image: yeasy/hyperledger-fabric:1.1.0-alpha
+    image: yeasy/hyperledger-fabric:1.1.0
     hostname: fabric.cli
     tty: true
     environment:

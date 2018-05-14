@@ -1,0 +1,82 @@
+# This compose file will start a Hyperledger Fabric 1.0 MVE, including
+# * 4 ca 
+# * 1 orderer with 4 kafka nodes and 3 zookeeper nodes
+# * 4 orgs with 2 peers each
+# * cli for testing and interacting 
+#
+# We use Docker Swarm to deploy and manage Hyperledger Fabric Network
+
+version: '3.2'
+
+
+# We use an external network : docker network create --driver overlay --attachable fabric
+networks:
+  fabric:
+    external:
+      name: fabricnet
+
+
+services:
+
+# ZooKeeper services, at least 3 nodes
+  zookeeper0:
+    image: hyperledger/fabric-zookeeper:x86_64-1.0.1
+
+    restart: always
+    tty: true
+    hostname: zookeeper0
+    expose:
+      - '2181'
+      - '2888'
+      - '3888'
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=0.0.0.0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+    networks:
+      fabric:
+        aliases:
+          - zookeeper0
+    deploy:
+      placement:
+        constraints: [node.hostname ==multivac]
+
+  zookeeper1:
+    image: hyperledger/fabric-zookeeper:x86_64-1.0.1
+    restart: always
+    tty: true
+    hostname: zookeeper1
+    expose:
+      - '2181'
+      - '2888'
+      - '3888'
+    environment:
+      - ZOO_MY_ID=2
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zookeeper2:2888:3888
+    networks:
+      fabric:
+        aliases:
+          - zookeeper1
+    deploy:
+      placement:
+        constraints: [node.hostname == multivac ] 
+
+  zookeeper2:
+    image: hyperledger/fabric-zookeeper:x86_64-1.0.1
+    restart: always
+    tty: true
+    hostname: zookeeper2
+    expose:
+      - '2181'
+      - '2888'
+      - '3888'
+    environment:
+      - ZOO_MY_ID=3
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=0.0.0.0:2888:3888
+    networks:
+      fabric:
+        aliases:
+          - zookeeper2
+    deploy:
+      placement:
+        constraints: [node.hostname ==multivac]
+

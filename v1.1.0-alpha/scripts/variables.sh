@@ -11,7 +11,7 @@ TIMEOUT="30"
 MAX_RETRY=10
 
 # Organization and peers
-ORGS=( 1 2 )
+ORGS=( 1 2 3 4 )
 PEERS=( 0 1 )
 #: "${ORGS:=( 1 2 )}"
 #: "${PEERS:=( 0 1 )}"
@@ -19,16 +19,26 @@ PEERS=( 0 1 )
 # MSP related paths
 ORDERER_TLS_CA=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ORDERER_MSP=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp
-
 ORDERER_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+
 ORG1_PEER0_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
 ORG1_PEER1_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt
+
 ORG2_PEER0_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 ORG2_PEER1_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt
+
+
+ORG3_PEER0_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
+ORG3_PEER1_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt
+
+ORG4_PEER0_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls/ca.crt
+ORG4_PEER1_TLS_ROOTCERT=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/tls/ca.crt
+
 
 ORDERER_ADMIN_MSP=/etc/hyperledger/fabric/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp
 ORG1_ADMIN_MSP=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
 ORG2_ADMIN_MSP=/etc/hyperledger/fabric/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+
 ORG1MSP=Org1MSP
 ORG2MSP=Org2MSP
 ORG3MSP=Org3MSP
@@ -39,10 +49,18 @@ ORG5MSP=Org5MSP
 
 # Node URLS
 ORDERER_URL="orderer.example.com:7050"
+
 ORG1_PEER0_URL="peer0.org1.example.com:7051"
 ORG1_PEER1_URL="peer1.org1.example.com:7051"
+
 ORG2_PEER0_URL="peer0.org2.example.com:7051"
 ORG2_PEER1_URL="peer1.org2.example.com:7051"
+
+ORG3_PEER0_URL="peer0.org3.example.com:7051"
+ORG3_PEER1_URL="peer1.org3.example.com:7051"
+
+ORG4_PEER0_URL="peer0.org4.example.com:7051"
+ORG4_PEER1_URL="peer1.org4.example.com:7051"
 
 
 # Chaincode tuna-app related
